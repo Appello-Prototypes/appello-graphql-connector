@@ -47,6 +47,73 @@ async function main() {
     const companyId = companiesList.data.companies.data[0].id;
     const companyRecord = await companies.getRecord(companyId);
     console.info("Company Record", companyRecord);
+
+    /**
+     * Create a new company record
+     */
+    const newCompanyRecord = await companies.createRecord({
+        name: `New Company - ${new Date().toISOString()}`,
+        description: "This is a new company",
+        companyTypeId: companyRecord.data.company.companyTypeId
+    });
+    console.info("New Company Record", newCompanyRecord);
+
+    /**
+     * Update the new company record
+     */
+    const updatedCompanyRecord = await companies.updateRecord(
+        newCompanyRecord.data.createCompany.id,
+        {
+            name: `Updated Company - ${new Date().toISOString()}`
+        }
+    );
+    console.info("Updated Company Record", updatedCompanyRecord);
+
+    /**
+     * Archive the new company record
+     */
+    const archivedCompanyRecord = await companies.archiveRecord(
+        newCompanyRecord.data.createCompany.id
+    );
+    console.info("Archived Company Record", archivedCompanyRecord);
+
+    /**
+     * Restore the archived company record
+     */
+    const restoredCompanyRecord = await companies.restoreRecord(
+        archivedCompanyRecord.data.archiveCompany.id
+    );
+    console.info("Restored Company Record", restoredCompanyRecord);
+
+    /**
+     * Delete the new company record
+     */
+    const deletedCompanyRecord = await companies.deleteRecord(
+        newCompanyRecord.data.createCompany.id
+    );
+    console.info("Deleted Company Record", deletedCompanyRecord);
+
+    /**
+     * Get the columns for the Company table
+     */
+    const companyTableColumns = await companies.getTableColumns();
+    console.info("Company Table Columns", companyTableColumns);
+
+    /**
+     * Get a set of records for the Company table
+     */
+    const companyTableRecordSet = await companies.getTableRecordSet({
+        take: 3,
+        where: {
+            isArchived: false,
+            companyType: companyRecord.data.company.companyTypeId
+        },
+        orderBy: {
+            column: "createdAt",
+            value: "desc"
+        }
+    });
+    console.info("Company Table Record Set", companyTableRecordSet);
 }
 
 /**

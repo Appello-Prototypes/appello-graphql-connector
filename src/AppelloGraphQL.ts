@@ -81,8 +81,8 @@ export class AppelloGraphQL {
             })
         });
 
-        if (!response.ok) {
-            throw new Error(`Failed to get user token: ${response.statusText}`);
+        if (response.status >= 500) {
+            throw new Error(`Server Error: ${response.statusText}`);
         }
 
         const data: GraphQLResponse<T> = await response.json();
@@ -137,7 +137,7 @@ export class AppelloGraphQL {
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to get application token: ${response.statusText}`);
+            throw new Error(`Failed to renew application token: ${response.statusText}`);
         }
 
         const data: AppelloGraphQLApplicationTokenResponse = await response.json();
